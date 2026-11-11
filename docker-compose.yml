@@ -1,0 +1,32 @@
+﻿services:
+  app:
+    build: .
+    container_name: mi-aplicacion-php
+    ports:
+      - "8081:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: mi-base-datos
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: practica
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: "123456"
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
